@@ -1,6 +1,6 @@
 from enum import Enum
 from random import randint
-from tkinter import Frame, Label, Tk
+from tkinter import Frame, Label, Tk, Button
 
 
 # class to return necessary information for traversing array based on selected direction
@@ -61,16 +61,37 @@ class gameBoard:
             self.turn_label['text'] = move_type['GAME_OVER'].value
             self.game_over = True
 
+    def new_board(self):
+        # create initial row and col 2d lists and start with a 2 in a random gamepiece
+        self.grid_values['row'] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        self.grid_values['col'] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]       
+        rand_x = self.get_rand(0, 3, "x_val")
+        rand_y = self.get_rand(0, 3, "y_val")
+        self.grid_values['row'][rand_x][rand_y] = 2
+        self.grid_values['col'][rand_y][rand_x] = 2
+        self.total_score = 0
+        self.score_label['text'] = 'Score: ' + str(self.total_score)
+        self.turn_label['text'] = move_type['INITIAL'].value
+        # create cells (labels) for gamepiece values and print initial values
+        for i in range (0, 4):
+            for j in range (0, 4):
+                cell_name = 'r' + str(i) + '_c' + str(j)
+                self.display_array.update({cell_name:Label(self.main, width=6, height=2, borderwidth=2, relief='ridge')})
+                self.display_array[cell_name].grid(row=i, column=j)
+        self.print_arrays()
     # initialization of class populates initial 2d list and creates, binds, and runs the tkinter display elements        
     def __init__(self, root):
         
         # create labels and frames with initial values and bind them
         self.root = root
         self.main = Frame(root)
+        
         self.header = Frame(root)
         self.header_label = Label(self.header, text='2048 Game')
-        self.score_label = Label(self.header, text='Score: 0')
-        self.turn_label = Label(self.header, text=move_type['INITIAL'].value, wraplength=150, height=3)        
+        self.score_label = Label(self.header)
+        self.turn_label = Label(self.header, wraplength=150, height=3)        
+        self.reset = Button(self.header, text="Restart", command = self.new_board)
+        self.reset.pack()
         self.header.pack()
         self.header_label.pack()
         self.score_label.pack()
@@ -81,21 +102,7 @@ class gameBoard:
         self.root.bind('<Up>', self.game_play)
         self.root.bind('<Down>', self.game_play)
         
-        # create initial row and col 2d lists and start with a 2 in a random gamepiece
-        self.grid_values['row'] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-        self.grid_values['col'] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]       
-        rand_x = self.get_rand(0, 3, "x_val")
-        rand_y = self.get_rand(0, 3, "y_val")
-        self.grid_values['row'][rand_x][rand_y] = 2
-        self.grid_values['col'][rand_y][rand_x] = 2
-
-        # create cells (labels) for gamepiece values and print initial values
-        for i in range (0, 4):
-            for j in range (0, 4):
-                cell_name = 'r' + str(i) + '_c' + str(j)
-                self.display_array.update({cell_name:Label(self.main, width=6, height=2, borderwidth=2, relief='ridge')})
-                self.display_array[cell_name].grid(row=i, column=j)
-        self.print_arrays()
+        self.new_board()
 
         # start tkinter gui
         self.root.mainloop()
