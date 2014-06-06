@@ -36,6 +36,12 @@ class gameBoard:
     total_score = 0
     game_over = False
     
+    def store_score(self):
+        file = open('scores.txt', 'a')
+        file.write(str(self.turn_count)+ ',' + str(self.total_score)+'\n')
+        file.close()
+
+    
     # core game play method called when arrow key is entered - bound to root tkinter element
     def game_play(self, event):
         # only perform game play if the game is not over
@@ -60,6 +66,7 @@ class gameBoard:
         if move_remains == False:
             self.turn_label['text'] = move_type['GAME_OVER'].value
             self.game_over = True
+            self.store_score()
 
     def new_board(self):
         # create initial row and col 2d lists and start with a 2 in a random gamepiece
